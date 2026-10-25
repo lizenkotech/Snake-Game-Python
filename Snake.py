@@ -8,38 +8,43 @@
 
 import random
 import os
+import curses
 
-# ===== Game config =====
+
+# ===== Game config =====================================================
 width = 30
 height = 15
 
-# ===== Directions =====
+# ===== Directions ======================================================
 up = (0, -1)
 down = (0, 1)
 left = (-1, 0)
 right = (1, 0)
-# ===== CLEAR =====
+# ===== CLEAR ===========================================================
 def clear():
-    if os.name == 'nt':
-        os.system('cls')
-    else:
-        os.system('clear')
-# ======== DRAW HELPERS ========
+    # if os.name == 'nt':
+    #     os.system('cls')
+    # else:
+    #     os.system('clear')
+
+    os.system('cls' if os.name == 'nt' else 'clear')
+# ======== DRAW HELPERS =================================================
 def draw(snake, food, score):
 
     clear()
 
-    grid = []
+    # grid = []
 
-    # Create the grid
-    for _ in range(height):
-        row = []
-        for _ in range(width):
-            row.append(' ')
-        grid.append(row)
+    # # Create the grid
+    # for _ in range(height):
+    #     row = []
+    #     for _ in range(width):
+    #         row.append(' ')
+    #     grid.append(row)
 
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
 
-    # ======== WALLS ========
+# ======== WALLS ========================================================
     for x in range(width):
         grid[0][x] = '#'
         grid[height - 1][x] = '#'
@@ -48,27 +53,28 @@ def draw(snake, food, score):
         grid[y][0] = '#'
         grid[y][width - 1] = '#'
 
-    # ======== FOOD ========
-    fx = food[0]
-    fy = food[1]
+# ======== FOOD ==========================================================
+    # fx = food[0]
+    # fy = food[1]
+    fx, fy = food
     grid[fy][fx] = '*'
 
-    # ======== SNAKE ========
+ # ======== SNAKE ========================================================
     for i, (x, y) in enumerate(snake):
         if i == 0:
             grid[y][x] = '@'
         else:
             grid[y][x] = '8'
 
-    # ======== PRINT GRID RENDER ========
+# ======== PRINT GRID RENDER =============================================
     for row in grid:
         for cell in row:
             print(cell, end=' ')
         print()
-    print("score: ", score)
+    print(f"score:  {score}")
     print("Move with WASD then pres enter (q to quite)")
 
-# ======== FOOD ========
+# ======== FOOD ========================================================
 def create_food(snake):
     while True:
         food = (
@@ -78,8 +84,12 @@ def create_food(snake):
 
         if food not in snake:
             return food
+# ======== KEYBOARD CONTROLS ===========================================
+def on_press(event):
+    # Your keyboard control code goes here
+    pass
 
-# ======== GAME ========
+# ======== GAME ========================================================
 def game():
     snake = [
         (width // 2, height // 2),
@@ -108,12 +118,14 @@ def game():
         elif key == 'q':
             break
 
-        head = snake[0]
-        head_x = head[0]
-        head_y = head[1]
+        # head = snake[0]
+        # head_x = head[0]
+        # head_y = head[1]
+        head_x, head_y = snake[0]
 
-        dx = direction[0]
-        dy = direction[1]
+        # dx = direction[0]
+        # dy = direction[1]
+        dx, dy = direction
 
         new_head = (head_x + dx, head_y + dy)
 
@@ -133,16 +145,17 @@ def game():
 
         #FOOD
         if new_head== food:
+            #score = score + 10
             score += 10
             food = create_food(snake)
         else:
             snake.pop()
 
 
-# ======== GAME OVER ========
+# ======== GAME OVER ================================================
     print("\n" + "#" * 35)
     print("             GAME OVER")
-    print("             final score: ", score)
+    print(f"             final score: {score}")
     print("\n" + "#" * 35)
 # Start the game
 game()
